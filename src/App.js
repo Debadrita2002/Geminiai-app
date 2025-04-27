@@ -7,13 +7,12 @@ function App() {
   const [response, setResponse] = useState('')
   const submitHandler = (e)=>{
     e.preventDefault();
-    console.log(question);
     axios.post('https://gemini-app-orpin.vercel.app/getResponse',{
       question:question
     })
     .then(res=>{
-      console.log(res.data.response)
       setResponse(res.data.response)
+      setQuestion('');
     })
     .catch(err=>{
       console.log(err)
