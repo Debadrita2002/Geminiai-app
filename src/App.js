@@ -1,23 +1,55 @@
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
+import axios from 'axios';
 
 function App() {
+  const [question, setQuestion] = useState('');
+  const [response, setResponse] = useState('')
+  const submitHandler = (e)=>{
+    e.preventDefault();
+    console.log(question);
+    axios.post('https://gemini-app-orpin.vercel.app/getResponse',{
+      question:question
+    })
+    .then(res=>{
+      console.log(res.data.response)
+      setResponse(res.data.response)
+    })
+    .catch(err=>{
+      console.log(err)
+    })
+  }
+
+  const speakHandler = ()=>{
+    const sound=new SpeechSynthesisUtterance(response);
+    window.speechSynthesis.speak(sound);
+  }
+  const stopHandler = ()=>{
+    window.speechSynthesis.cancel();
+  }
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className='user'>
+        <div className='profilepic'>
+            <img className='pic' alt='profile pic' src={require('../src/assets/user.png')}/>
+        </div>
+        <p className='label'>Question</p>
+        <textarea onChange={(e)=>{setQuestion(e.target.value)}}/>
+        <button  onClick={submitHandler}>Send</button>
+      </div>
+      <div className='gemini'>
+      <div className='profilepic'>
+            <img className='pic' alt='profile pic' src={require('../src/assets/gemini.png')}/>
+        </div>
+        <p className='label'>Gemini</p>
+        <textarea value={response}/>
+        <div className='speak'>
+            <button className='btn1' onClick={speakHandler}>Speak</button>
+            <button className='btn2' onClick={stopHandler}>Stop</button>
+        </div>
+      </div>
     </div>
   );
 }
